@@ -5,6 +5,7 @@ import (
     "time"
 )
 
+//协程与通道
 func main() {
     func1()
     func2()
