@@ -1,7 +1,9 @@
 package main
 
 import (
+    "context"
     "fmt"
+    "math/rand"
     "strconv"
     "sync"
     "sync/atomic"
@@ -9,6 +11,8 @@ import (
 )
 
 func main() {
+    Once()
+    WaitGroup()
     //互斥锁
     for i := 0; i < 10; i++ {
         addMutex(strconv.Itoa(i))
@@ -102,11 +106,116 @@ func Atomic() { //原子操作
     fmt.Println(swapUint64)
     //加载
     var num3 uint64
-    atomic.AddUint64(&num3, 70)
+    atomic.LoadUint64(&num3)
     //存储
     var num4 uint64
-    atomic.AddUint64(&num4, 70)
+    atomic.StoreUint64(&num4, 70)
     //交换
     var num5 uint64
-    atomic.AddUint64(&num5, 70)
+    atomic.SwapUint64(&num5, 70)
+}
+func WaitGroup() {
+    var wg sync.WaitGroup
+
+    wg.Add(1)
+    go func() {
+        defer wg.Done()
+        fmt.Println("等等老王")
+        time.Sleep(15 * time.Second)
+        fmt.Println("老王来了")
+    }()
+    wg.Add(1)
+    go func() {
+        defer wg.Done()
+        fmt.Println("等等老李")
+        time.Sleep(10 * time.Second)
+        fmt.Println("老李来了")
+    }()
+    fmt.Println("等人齐")
+    wg.Wait()
+    fmt.Println("都到齐了")
+}
+func Once() {
+    var once sync.Once
+    for i := 0; i < 6; i++ {
+        once.Do(func() {
+            fmt.Println("只打印一次")
+        })
+    }
+}
+
+//WithCancel
+func Free() {
+    fmt.Println("Start")
+    secret := rand.Intn(100)
+    ctx, cancelFunc := context.WithCancel(context.Background())
+
+    for i := 0; i < 3; i++ {
+        var num int32
+        r := rand.Intn(100)
+        num = int32(r)
+        fmt.Println("我猜的数字是：%d\n", num)
+
+        go choose(func() {
+            if atomic.LoadInt32(&num) == int32(secret) {
+                fmt.Println("恭喜你")
+            }
+            cancelFunc()
+        })
+    }
+    go func() {
+        select {
+        case <-ctx.Done():
+        }
+    }()
+    time.Sleep(3 * time.Second)
+    fmt.Println("答案是" + strconv.Itoa(secret))
+    fmt.Println("感谢光临")
+}
+func choose(deferFunc func()) {
+    defer func() {
+        deferFunc()
+    }()
+    time.Sleep(2 * time.Second)
+}
+
+//WithDeadline
+func WithDeadline() {
+    d := time.Now().Add(100 * time.Microsecond)
+    ctx, cancel := context.WithDeadline(context.Background(), d)
+    defer cancel()
+    select {
+    case <-time.After(1 * time.Second):
+        fmt.Println("Over")
+    case <-ctx.Done():
+        fmt.Println(ctx.Err())
+    }
+}
+
+//WithTimeout
+func WithTimeout() {
+    ctx, cancel := context.WithTimeout(context.Background(), 100*time.Microsecond)
+    defer cancel()
+    select {
+    case <-time.After(1 * time.Second):
+        fmt.Println("Over")
+    case <-ctx.Done():
+        fmt.Println(ctx.Err())
+    }
+}
+
+//WithValue
+func WithValue() {
+
+    f := func(ctx context.Context, k string) {
+        if v := ctx.Value(k); v != nil {
+            fmt.Println(v)
+            return
+        }
+        fmt.Println("没找到")
+    }
+    k := "Language"
+    ctx := context.WithValue(context.Background(), k, "Go")
+    f(ctx, k)
+    f(ctx, "color")
 }
