@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func main1() {
+func main() {
 	err := fun1(2)
 	fmt.Println(err)
 	fun2()
