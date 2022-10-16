@@ -1,5 +1,9 @@
 package main
 
+/*
+类的改动是通过增加代码进行的，而不是修改源代码。
+*/
+
 // 抽象的银行业务
 type AbstractBanker interface {
 	DoBuSi()
