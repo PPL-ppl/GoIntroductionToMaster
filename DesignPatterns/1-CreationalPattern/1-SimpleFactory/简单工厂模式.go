@@ -4,7 +4,7 @@ import "fmt"
 
 // 水果 没有简单工厂模式
 
-type Fruit struct {
+/*type Fruit struct {
 }
 
 func (f *Fruit) Show(name string) {
@@ -29,14 +29,14 @@ func NewFruit(name string) *Fruit {
 		//创建Pear逻辑
 	}
 	return fruit
-}
+}*/
 
 // 简单工厂模式
-type fruit interface {
+type Fruit interface {
 	Show()
 }
 type Apple struct {
-	fruit
+	Fruit
 }
 
 func (apple Apple) Show() {
@@ -44,7 +44,7 @@ func (apple Apple) Show() {
 }
 
 type Banana struct {
-	fruit
+	Fruit
 }
 
 func (banana Banana) Show() {
@@ -52,7 +52,7 @@ func (banana Banana) Show() {
 }
 
 type Pear struct {
-	fruit
+	Fruit
 }
 
 func (pear Pear) Show() {
@@ -62,8 +62,8 @@ func (pear Pear) Show() {
 type Factory struct {
 }
 
-func (fuc Factory) CreateFruit(kind string) fruit {
-	var fruit fruit
+func (fuc Factory) CreateFruit(kind string) Fruit {
+	var fruit Fruit
 
 	if kind == "apple" {
 		fruit = new(Apple)
