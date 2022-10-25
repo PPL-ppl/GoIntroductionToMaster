@@ -1,15 +1,16 @@
 package Chapter13Test
 
 import (
-	"fmt"
-	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestSum(t *testing.T) {
-	result := sum()
-	fmt.Println(result)
-	assert.Equal(t, result, 45)
+	actual := sum()
+	expected := 4
+	//assert.Equal(t, expected, actual)
+	if expected != actual {
+		t.Errorf("expected '%d' but got '%d'", expected, actual)
+	}
 }
 func sum() int {
 	total := 0
