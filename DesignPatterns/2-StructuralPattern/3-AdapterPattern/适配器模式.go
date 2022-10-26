@@ -2,12 +2,6 @@ package main
 
 import "fmt"
 
-// 适配目标
-
-type V5 interface {
-	Use5v()
-}
-
 // 被适配的角色
 
 type V220 struct {
@@ -23,12 +17,23 @@ type Adapter struct {
 	*V220
 }
 
+// 适配器实现V5接口
+
 func (ad *Adapter) Use5v() {
 	fmt.Println("使用适配器充电")
 	ad.V220.Use220v()
 }
+
+//适配器传如V220 返回适配器  适配器调用适配者的方法
+
 func NewAdapter(v220 *V220) *Adapter {
 	return &Adapter{v220}
+}
+
+// 适配目标
+
+type V5 interface {
+	Use5v()
 }
 
 // 业务类
@@ -76,6 +81,7 @@ type Hero struct {
 
 func (h *Hero) Skill() {
 	fmt.Println("使用了技能")
+	//最终是调用这个适配者的方法
 	h.attack.Fight()
 }
 
