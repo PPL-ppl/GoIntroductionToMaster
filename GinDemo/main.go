@@ -23,7 +23,7 @@ func main() {
 	ginServer := gin.Default()
 	//注册自定义中间件
 	ginServer.Use(myHandler())
-	ginServer.Use(favicon.New("./favicon.ico"))
+	ginServer.Use(favicon.New("./GinDemo/favicon.ico"))
 	//访问地址，处理Request请求 Response响应
 	ginServer.GET("/hello", func(context *gin.Context) {
 		context.JSON(200, gin.H{"msg": "hello world"})
@@ -33,12 +33,12 @@ func main() {
 	})
 
 	//加载静态页面
-	ginServer.LoadHTMLGlob("templates/*")
+	ginServer.LoadHTMLGlob("GinDemo/templates/*")
 	//加载资源文件
 	ginServer.Static("static", "./static")
 	//响应静态页面
 	ginServer.GET("/index", func(context *gin.Context) {
-		context.HTML(200, "index.html", Student{Name: "小刘", Id: 22})
+		context.HTML(200, "00丨开篇词｜To Be a HTTP Hero.html", Student{Name: "小刘", Id: 22})
 	})
 	//接收前端传过来的参数
 	//http://127.0.0.1:8088/user/info?Id=2&Name=2
